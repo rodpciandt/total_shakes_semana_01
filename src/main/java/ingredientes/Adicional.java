@@ -1,8 +1,6 @@
 package ingredientes;
 
 
-public interface Adicional {
-
-    Enum obterTipo();
+public interface Adicional extends Ingrediente{
 
 }
