@@ -2,6 +2,11 @@ package demo;
 
 import ingredientes.*;
 import pedido.Cardapio;
+import pedido.Cliente;
+import pedido.ItemPedido;
+import pedido.Pedido;
+import produto.Shake;
+import produto.TipoTamanho;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +27,67 @@ public class App {
     private static void run() {
         Scanner input = new Scanner(System.in);
 
-//        System.out.print("Informe seu nome: \n>> ");
-//        String name = input.nextLine();
-//        System.out.print("Informe seu email: \n>> ");
-//        String email = input.nextLine();
+        System.out.print("Informe seu nome: \n>> ");
+        String name = input.nextLine();
+        System.out.print("Informe seu email: \n>> ");
+        String email = input.nextLine();
 
-//        Cliente client = new Cliente((int) Math.random(), name, email);
-//        System.out.printf("Olá, %s. Esse é o cardapio de hoje: ", name);
+        Cliente client = new Cliente(1, name, email);
+        System.out.printf("Olá, %s. Esse é o cardapio de hoje: ", name);
+
 
         populateMenu();
-        showMenu();
+
+        boolean run = true;
+
+        while(run) {
+            showMenu();
+
+            try {
+                System.out.print("Qual base você deseja?\n>> ");
+                String baseDesejada = input.nextLine();
+
+                Base base = new Base(TipoBase.valueOf(baseDesejada));
+
+                System.out.print("Qual fruta você deseja?\n>> ");
+                String frutaDesejada = input.nextLine();
+
+                Fruta fruta = new Fruta(TipoFruta.valueOf(frutaDesejada));
+
+                System.out.print("Qual topping você deseja?\n>> ");
+                String toppingDesejado = input.nextLine();
+
+                Topping topping = new Topping(TipoTopping.valueOf(toppingDesejado));
+
+//                System.out.println("Deseja colocar algum adicional?");
+//                String resp = input.nextLine();
+//
+//                System.out.println("Quais (separar os valores por virgula)?");
+//                List<String> adicionaisString = Arrays.asList(input.nextLine().split(","));
+
+                System.out.println("Qual o tamanho (P, M, G)? ");
+                TipoTamanho tamanho = TipoTamanho.valueOf(input.nextLine());
+
+                Shake shake = new Shake(base, fruta, topping, tamanho);
+
+                System.out.println(shake);
+
+                ItemPedido itemPedido = new ItemPedido(shake,1 );
+                Pedido pedido = new Pedido(1, new ArrayList<>(List.of(itemPedido)),  client);
+                System.out.println("Pedido enviado: " + pedido);
+
+                client.serializarCliente();
+
+                run = false;
+
+            } catch (IllegalArgumentException ex) {
+                System.out.println("Ingrediente invalido.");
+            }
+
+
+        }
+
+
 
 
     }
@@ -59,7 +115,7 @@ public class App {
         frutas.forEach(fruta -> System.out.println("- " + fruta));
         System.out.println("-------------- TOPPING -------------");
         toppings.forEach( topping -> System.out.println("- " + topping));
-
+        System.out.println("====================================");
     }
 
 

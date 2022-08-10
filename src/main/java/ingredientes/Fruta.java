@@ -1,7 +1,7 @@
 package ingredientes;
 
 public class Fruta implements Adicional, Ingrediente, Comparable<Ingrediente> {
-    private TipoFruta tipoFruta;
+    private final TipoFruta tipoFruta;
 
     public Fruta(TipoFruta tipoFruta) {
         this.tipoFruta = tipoFruta;

@@ -1,15 +1,16 @@
 package pedido;
 
 import ingredientes.Adicional;
-import ingredientes.Ingrediente;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Pedido {
 
-    private int id;
-    private ArrayList<ItemPedido> itens;
-    private Cliente cliente;
+    private final int id;
+    private final ArrayList<ItemPedido> itens;
+    private final Cliente cliente;
 
     public Pedido(int id, ArrayList<ItemPedido> itens, Cliente cliente) {
         this.id = id;
@@ -38,49 +39,51 @@ public class Pedido {
             double precoAdicionais = 0;
 
             if (item.getShake().getAdicionais() != null && !item.getShake().getAdicionais().isEmpty()) {
-                for ( Adicional adicional : item.getShake().getAdicionais()) {
+                for (Adicional adicional : item.getShake().getAdicionais()) {
                     precoAdicionais += cardapio.buscarPreco(adicional);
                 }
             }
 
-            double precoFinal = ( (precoBase * tamanhoMultiplicador) + precoAdicionais ) * item.getQuantidade();
+            double precoFinal = ((precoBase * tamanhoMultiplicador) + precoAdicionais) * item.getQuantidade();
             total += precoFinal;
         }
         return total;
     }
 
     public void adicionarItemPedido(ItemPedido itemPedidoAdicionado) {
-
         int oldQtd = 0;
         boolean shouldAdd = true;
-        for( ItemPedido item : itens) {
 
-            System.out.println("Exists: " + item.getShake());
-            System.out.println("Add: " + itemPedidoAdicionado.getShake());
+        for (ItemPedido item : itens) {
             if (item.getShake().equals(itemPedidoAdicionado.getShake())) {
-                System.out.println("Entrei no if");
                 oldQtd = item.getQuantidade();
                 itemPedidoAdicionado.setQuantidade(itemPedidoAdicionado.getQuantidade() + oldQtd);
-                itens.set( itens.indexOf(item), itemPedidoAdicionado);
+                itens.set(itens.indexOf(item), itemPedidoAdicionado);
                 shouldAdd = false;
             }
         }
 
-        System.out.println(shouldAdd);
         if (shouldAdd)
             itens.add(itemPedidoAdicionado);
     }
 
-    public boolean removeItemPedido(ItemPedido itemPedidoRemovido) {
-        //substitua o true por uma condição
 
-            if (itens.contains(itemPedidoRemovido)) {
-            itens.remove(itemPedidoRemovido);
+    public void removeItemPedido(ItemPedido itemPedidoRemovido) {
+        List<ItemPedido> existingItens = itens.stream().filter(item -> item.getShake().equals(itemPedidoRemovido.getShake())).collect(Collectors.toList());
 
-        } else {
+        if (existingItens.isEmpty())
             throw new IllegalArgumentException("Item nao existe no pedido.");
+
+
+        ItemPedido itemToRemove = existingItens.get(0);
+        int index = itens.indexOf(itemToRemove);
+
+        if (itemToRemove.getQuantidade() <= 1) {
+            itens.remove(itemToRemove);
+        } else {
+            itemToRemove.setQuantidade(itemToRemove.getQuantidade() - 1);
+            itens.set(index, itemToRemove);
         }
-        return false;
     }
 
     @Override
