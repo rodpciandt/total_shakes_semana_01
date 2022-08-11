@@ -51,20 +51,15 @@ public class Pedido {
     }
 
     public void adicionarItemPedido(ItemPedido itemPedidoAdicionado) {
-        int oldQtd = 0;
-        boolean shouldAdd = true;
+        List<ItemPedido> existingItens = itens.stream().filter(item -> item.getShake().equals(itemPedidoAdicionado.getShake())).collect(Collectors.toList());
 
-        for (ItemPedido item : itens) {
-            if (item.getShake().equals(itemPedidoAdicionado.getShake())) {
-                oldQtd = item.getQuantidade();
-                itemPedidoAdicionado.setQuantidade(itemPedidoAdicionado.getQuantidade() + oldQtd);
-                itens.set(itens.indexOf(item), itemPedidoAdicionado);
-                shouldAdd = false;
-            }
-        }
-
-        if (shouldAdd)
+        if (existingItens.isEmpty()) {
             itens.add(itemPedidoAdicionado);
+        } else {
+            ItemPedido itemPedido = existingItens.get(0);
+            itemPedidoAdicionado.setQuantidade(itemPedido.getQuantidade() + itemPedidoAdicionado.getQuantidade() );
+            itens.set(itens.indexOf(itemPedido), itemPedidoAdicionado);
+        }
     }
 
 
