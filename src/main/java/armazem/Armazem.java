@@ -1,5 +1,7 @@
 package armazem;
 
+import exceptions.IngredienteNaoEncontradoException;
+import exceptions.QuantidadeInvalidaException;
 import ingredientes.Ingrediente;
 
 import java.util.TreeMap;
@@ -46,7 +48,7 @@ public class Armazem {
         Integer oldQtd = estoque.get(ingrediente);
 
         if (oldQtd < qtd)
-            throw new IllegalArgumentException("Quantidade Invalida");
+            throw new QuantidadeInvalidaException();
         else if (oldQtd - qtd == 0)
             estoque.remove(ingrediente);
         else
@@ -56,11 +58,11 @@ public class Armazem {
 
     private void checkIfIngredientExists(Ingrediente ingrediente) {
         if (!estoque.containsKey(ingrediente))
-            throw new IllegalArgumentException("Ingrediente nao encontrado");
+            throw new IngredienteNaoEncontradoException();
     }
 
     private void checkIfQuantityIsvalid(Integer qtd) {
         if (qtd <= 0)
-            throw new IllegalArgumentException("Quantidade invalida");
+            throw new QuantidadeInvalidaException();
     }
 }
