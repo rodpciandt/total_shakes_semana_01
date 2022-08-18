@@ -11,8 +11,7 @@ import produto.TipoTamanho;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PedidoTest{
@@ -208,13 +207,11 @@ public class PedidoTest{
 
         pedido.adicionarItemPedido(itemPedido);
 
-        try{
-            pedido.removeItemPedido(itemPedidoRemovido);
-            fail("Excecao nao encontrada.");
-        }catch(Throwable e){
-            assertEquals("Item nao existe no pedido.", e.getMessage());
-            assertEquals(IllegalArgumentException.class, e.getClass());
-        }
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> pedido.removeItemPedido(itemPedidoRemovido));
+
+        assertEquals("Item nao existe no pedido.", ex.getMessage());
     }
 
     @Test
