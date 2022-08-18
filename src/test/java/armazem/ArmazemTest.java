@@ -6,6 +6,8 @@ import ingredientes.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,7 +17,6 @@ public class ArmazemTest {
 
     private Armazem armazem;
     private Ingrediente ingrediente;
-    private final String INGREDIENTE_JA_CADASTRADO = "Ingrediente ja cadastrado";
     private final String INGREDIENTE_NAO_ENCONTRADO = "Ingrediente nao encontrado";
     private final String QUANTIDADE_INVALIDA = "Quantidade invalida";
 
@@ -39,7 +40,7 @@ public class ArmazemTest {
     public void cadastrarIngrediente_exceptionQuandoJaExiste() {
         var ex = assertThrows(IllegalArgumentException.class,
                 () -> armazem.cadastrarIngredienteEmEstoque(ingrediente));
-        assertEquals(INGREDIENTE_JA_CADASTRADO, ex.getMessage());
+        assertEquals("Ingrediente ja cadastrado", ex.getMessage());
     }
 
     @Test
@@ -68,7 +69,7 @@ public class ArmazemTest {
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(ingrediente, 3);
 
         Integer quantity = armazem.consultarQuantidadeDoIngredienteEmEstoque(ingrediente);
-        assertEquals(3, quantity );
+        assertEquals(3, quantity);
 
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(ingrediente, 2);
         quantity = armazem.consultarQuantidadeDoIngredienteEmEstoque(ingrediente);
@@ -76,16 +77,14 @@ public class ArmazemTest {
     }
 
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
     @DisplayName("[AdicionarQuantidade]: quando adicionar quantidade menor ou igual zero, deveria jogar exception")
-    public void adicionarQuantidade_exceptionQuandoAdicionarQtdMenorOuIgualAZero() {
+    public void adicionarQuantidade_exceptionQuandoAdicionarQtdMenorOuIgualAZero(Integer quantity) {
         var ex = assertThrows(QuantidadeInvalidaException.class,
-                () -> armazem.adicionarQuantidadeDoIngredienteEmEstoque(ingrediente, 0));
-        var ex1 = assertThrows(QuantidadeInvalidaException.class,
-                () -> armazem.adicionarQuantidadeDoIngredienteEmEstoque(ingrediente, -1));
+                () -> armazem.adicionarQuantidadeDoIngredienteEmEstoque(ingrediente, quantity));
 
         assertEquals(QUANTIDADE_INVALIDA, ex.getMessage());
-        assertEquals(QUANTIDADE_INVALIDA, ex1.getMessage());
     }
 
     @Test
@@ -105,7 +104,7 @@ public class ArmazemTest {
 
         Integer quantity = armazem.consultarQuantidadeDoIngredienteEmEstoque(ingrediente);
 
-        assertEquals(3,quantity);
+        assertEquals(3, quantity);
     }
 
     @Test
@@ -131,18 +130,15 @@ public class ArmazemTest {
 
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
     @DisplayName("[DiminuirQuantidade]: deveria jogar exception quando quantidade a ser removida for menor ou igual a zero")
-    public void diminuirQuantidade_exceptionQuandoQtfForMenorOuIgualAZero() {
+    public void diminuirQuantidade_exceptionQuandoQtfForMenorOuIgualAZero(Integer quantity) {
         armazem.adicionarQuantidadeDoIngredienteEmEstoque(ingrediente, 5);
 
         var ex = assertThrows(QuantidadeInvalidaException.class,
-                () -> armazem.reduzirQuantidadeDoIngredienteEmEstoque(ingrediente, 0));
+                () -> armazem.reduzirQuantidadeDoIngredienteEmEstoque(ingrediente, quantity));
         assertEquals(QUANTIDADE_INVALIDA, ex.getMessage());
-
-        var ex1 = assertThrows(QuantidadeInvalidaException.class,
-                () -> armazem.reduzirQuantidadeDoIngredienteEmEstoque(ingrediente, -1));
-        assertEquals(QUANTIDADE_INVALIDA, ex1.getMessage());
 
     }
 
